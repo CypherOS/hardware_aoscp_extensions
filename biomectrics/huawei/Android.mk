@@ -16,4 +16,11 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(call all-makefiles-under,$(LOCAL_PATH))
+ifeq ($(TARGET_HUAWEI_BIOMECTRICS_EXTENSIONS),true)
+include $(CLEAR_VARS)
+LOCAL_MODULE := aoscp-biomectrics-huawei
+LOCAL_SRC_FILES := $(call all-java-files-under,src)
+LOCAL_MODULE_TAGS := optional
+LOCAL_DEX_PREOPT := false
+include $(BUILD_JAVA_LIBRARY)
+endif
