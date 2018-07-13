@@ -12,16 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := $(call my-dir)
-
-BIOMECTRICS_PATH := src/co/aoscp/hardware/biomectrics
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := biomectrics-ext
-LOCAL_JAVA_LIBRARIES := hardware-aoscp
-LOCAL_SRC_FILES := $(call all-java-files-under,$(BIOMECTRICS_PATH))
-LOCAL_MODULE_TAGS := optional
-LOCAL_DEX_PREOPT := false
-include $(BUILD_JAVA_LIBRARY)
-
-include $(call all-makefiles-under,$(LOCAL_PATH))
+PRODUCT_BOOT_JARS += \
+    hardware-aoscp
+    
+ifneq ($(TARGET_USES_BIOMECTRICS_FEATURES),)
+PRODUCT_PACKAGES += \
+    biomectrics-ext
+endif

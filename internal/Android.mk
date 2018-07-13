@@ -14,14 +14,18 @@
 
 LOCAL_PATH := $(call my-dir)
 
-BIOMECTRICS_PATH := src/co/aoscp/hardware/biomectrics
-
 include $(CLEAR_VARS)
-LOCAL_MODULE := biomectrics-ext
-LOCAL_JAVA_LIBRARIES := hardware-aoscp
-LOCAL_SRC_FILES := $(call all-java-files-under,$(BIOMECTRICS_PATH))
+
+LOCAL_AIDL_INCLUDES := $(LOCAL_PATH)/src/co
+LOCAL_SRC_FILES := $(call all-java-files-under, src/co) \
+    $(call all-Iaidl-files-under, src/co) \
+    $(call all-logtags-files-under, src/co)
+
 LOCAL_MODULE_TAGS := optional
-LOCAL_DEX_PREOPT := false
+LOCAL_MODULE := hardware-aoscp
+
 include $(BUILD_JAVA_LIBRARY)
 
+# Include subdirectory makefiles
+# ============================================================
 include $(call all-makefiles-under,$(LOCAL_PATH))
