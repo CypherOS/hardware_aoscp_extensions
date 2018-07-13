@@ -14,8 +14,11 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-ifeq ($(TARGET_HARDWARE_FEATURES),huawei)
-    BOARD_PATH:= $(LOCAL_PATH)/huawei
-endif
+include $(CLEAR_VARS)
+LOCAL_MODULE := biomectrics-ext-huawei
+LOCAL_SRC_FILES := $(call all-java-files-under,biomectrics)
+LOCAL_MODULE_TAGS := optional
+LOCAL_DEX_PREOPT := false
+include $(BUILD_JAVA_LIBRARY)
 
-include $(call all-makefiles-under,$(BOARD_PATH))
+include $(call all-makefiles-under,$(LOCAL_PATH))

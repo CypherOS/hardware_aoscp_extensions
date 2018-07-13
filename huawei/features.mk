@@ -14,8 +14,6 @@
 
 LOCAL_PATH:= $(call my-dir)
 
-ifeq ($(TARGET_HARDWARE_FEATURES),huawei)
-    BOARD_PATH:= $(LOCAL_PATH)/huawei
+ifeq ($(TARGET_USES_BIOMECTRICS_FEATURES),true)
+PRODUCT_PACKAGES += biomectrics-ext-huawei
 endif
-
-include $(call all-makefiles-under,$(BOARD_PATH))

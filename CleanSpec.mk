@@ -11,11 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-LOCAL_PATH:= $(call my-dir)
+# ************************************************
+# NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
+# ************************************************
 
-ifeq ($(TARGET_HARDWARE_FEATURES),huawei)
-    BOARD_PATH:= $(LOCAL_PATH)/huawei
-endif
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/biomectrics-*)
 
-include $(call all-makefiles-under,$(BOARD_PATH))
+# ************************************************
+# NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
+# ************************************************
