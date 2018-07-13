@@ -11,15 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-LOCAL_PATH:= $(call my-dir)
+# ************************************************
+# NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
+# ************************************************
 
-BIOMECTRICS_HUAWEI:= biomectrics/huawei
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/aoscp-*)
 
-# Huawei Biomectrics
-include $(CLEAR_VARS)
-LOCAL_MODULE := aoscp-biomectrics-huawei
-LOCAL_SRC_FILES := $(call all-java-files-under,BIOMECTRICS_HUAWEI)
-LOCAL_MODULE_TAGS := optional
-LOCAL_DEX_PREOPT := false
-include $(BUILD_JAVA_LIBRARY)
+# ************************************************
+# NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
+# ************************************************
