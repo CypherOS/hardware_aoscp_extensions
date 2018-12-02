@@ -14,4 +14,22 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(call my-dir)
+path_core = "core/java/aoscp"
+path_services = "services/src/java/co/aoscp/server"
+
+java_library_static {
+    name: "hardware.aoscp",
+    required: ["services"],
+    libs: "android-support-annotations",
+
+    srcs: [
+        path_core + "/**/*.java",
+		path_services + "/**/*.java",
+        path_core + "/**/I*.aidl",
+		path_services + "/**/I*.aidl",
+    ],
+
+    aidl: {
+        local_include_dirs: [path_core],
+    },
+}
