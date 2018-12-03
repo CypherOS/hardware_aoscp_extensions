@@ -40,3 +40,13 @@ java_library_static {
         local_include_dirs: [path_core],
     },
 }
+
+java_library {
+    name: "hardware.aoscp.controllers",
+    srcs: ["src//**/*.java"],
+
+    libs: [
+        "hardware.aoscp",
+        "services",
+    ],
+}

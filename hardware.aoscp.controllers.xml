@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <feature name="hardware.aoscp.controllers" />
+    <library name="hardware.aoscp.controllers"
+            file="/system/framework/hardware.aoscp.controllers.jar" />
+</permissions>
