@@ -15,7 +15,7 @@
 //
 
 path_core = "core/java/aoscp"
-path_services = "services/src/java/co/aoscp/server"
+path_services = "services/src/java/co/aoscp"
 
 hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
     "android-support-annotations",
