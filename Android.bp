@@ -15,11 +15,28 @@
 //
 
 path_core = "core/java/aoscp"
+path_platform = "platform/java/aoscp"
 path_services = "services/src/java/co/aoscp/server"
 
 hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
     "android-support-annotations",
 ]
+
+java_library {
+    name: "hardware.aoscp.platform",
+
+    libs: [
+    ] + hardware_aoscp_LOCAL_JAVA_LIBRARIES,
+
+    srcs: [
+        path_platform + "/**/*.java",
+        path_platform + "/**/I*.aidl",
+    ],
+
+    aidl: {
+        local_include_dirs: [path_platform],
+    },
+}
 
 java_library_static {
     name: "hardware.aoscp",
@@ -27,6 +44,8 @@ java_library_static {
 
     libs: [
         "services.core",
+		"hardware.aoscp.controllers",
+		"hardware.aoscp.platform",
     ] + hardware_aoscp_LOCAL_JAVA_LIBRARIES,
 
     srcs: [
@@ -39,4 +58,13 @@ java_library_static {
     aidl: {
         local_include_dirs: [path_core],
     },
+}
+
+java_library {
+    name: "hardware.aoscp.controllers",
+    srcs: ["src//**/*.java"],
+
+    libs: [
+		"hardware.aoscp.platform",
+    ],
 }
