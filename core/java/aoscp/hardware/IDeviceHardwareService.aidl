@@ -18,10 +18,17 @@
 
 package aoscp.hardware;
 
+import aoscp.hardware.display.DisplayMode;
+
 /** @hide */
 interface IDeviceHardwareService {
 
     int getSupportedFeatures();
     boolean get(int feature);
     boolean set(int feature, boolean enable);
+	
+	DisplayMode[] getDisplayModes();
+    DisplayMode getCurrentDisplayMode();
+    DisplayMode getDefaultDisplayMode();
+    boolean setDisplayMode(in DisplayMode mode, boolean makeDefault);
 }
