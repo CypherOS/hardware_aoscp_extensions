@@ -22,13 +22,20 @@ import android.Manifest;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.UserHandle;
+import android.util.ArrayMap;
 import android.util.Log;
 
 import aoscp.content.HardwareContext;
 import aoscp.content.HardwareIntent;
+import aoscp.hardware.DeviceHardwareManager;
 import aoscp.hardware.IDeviceHardwareService;
+import aoscp.hardware.display.DisplayMode;
+
+import co.aoscp.hwcontrollers.DisplayEngineController;
 
 import com.android.server.HwSystemService;
+
+import java.util.ArrayList;
 
 /** @hide */
 public class DeviceHardwareService extends HwSystemService {
@@ -37,11 +44,21 @@ public class DeviceHardwareService extends HwSystemService {
 
     private final Context mContext;
     private final HardwareInterface mHwImpl;
+	
+	private final ArrayMap<String, String> mDisplayModeMappings =
+            new ArrayMap<String, String>();
+    private final boolean mFilterDisplayModes;
 
     private interface HardwareInterface {
         public int getSupportedFeatures();
         public boolean get(int feature);
         public boolean set(int feature, boolean enable);
+
+		// DisplayEngine
+		public DisplayMode[] getDisplayModes();
+        public DisplayMode getCurrentDisplayMode();
+        public DisplayMode getDefaultDisplayMode();
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault);
     }
 
     private class LegacyHardware implements HardwareInterface {
@@ -49,6 +66,8 @@ public class DeviceHardwareService extends HwSystemService {
         private int mSupportedFeatures = 0;
 
         public LegacyHardware() {
+			if (DisplayEngineController.isSupported())
+                mSupportedFeatures |= DeviceHardwareManager.FEATURE_DISPLAY_ENGINE;
         }
 
         public int getSupportedFeatures() {
@@ -62,6 +81,22 @@ public class DeviceHardwareService extends HwSystemService {
         public boolean set(int feature, boolean enable) {
             return false;
         }
+
+		public DisplayMode[] getDisplayModes() {
+            return DisplayEngineController.getAvailableModes();
+        }
+
+        public DisplayMode getCurrentDisplayMode() {
+            return DisplayEngineController.getCurrentMode();
+        }
+
+        public DisplayMode getDefaultDisplayMode() {
+            return DisplayEngineController.getDefaultMode();
+        }
+
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault) {
+            return DisplayEngineController.setMode(mode, makeDefault);
+        }
     }
 
     private HardwareInterface getImpl(Context context) {
@@ -73,6 +108,19 @@ public class DeviceHardwareService extends HwSystemService {
         mContext = context;
         mHwImpl = getImpl(context);
         publishBinderService(HardwareContext.DEVICE_HARDWARE_SERVICE, mService);
+		
+		final String[] mappings = mContext.getResources().getStringArray(
+                com.android.internal.R.array.config_displayModeMappings);
+        if (mappings != null && mappings.length > 0) {
+            for (String mapping : mappings) {
+                String[] split = mapping.split(":");
+                if (split.length == 2) {
+                    mDisplayModeMappings.put(split[0], split[1]);
+                }
+            }
+        }
+        mFilterDisplayModes = mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_filterDisplayModes);
     }
 
     @Override
@@ -92,6 +140,19 @@ public class DeviceHardwareService extends HwSystemService {
 
     @Override
     public void onStart() {
+    }
+
+	private DisplayMode remapDisplayMode(DisplayMode in) {
+        if (in == null) {
+            return null;
+        }
+        if (mDisplayModeMappings.containsKey(in.name)) {
+            return new DisplayMode(in.id, mDisplayModeMappings.get(in.name));
+        }
+        if (!mFilterDisplayModes) {
+            return in;
+        }
+        return null;
     }
 
     private final IBinder mService = new IDeviceHardwareService.Stub() {
@@ -129,5 +190,59 @@ public class DeviceHardwareService extends HwSystemService {
             return mHwImpl.set(feature, enable);
         }
 
+		@Override
+        public DisplayMode[] getDisplayModes() {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DISPLAY_ENGINE)) {
+                Log.e(TAG, "Display modes are not supported");
+                return null;
+            }
+            final DisplayMode[] modes = mHwImpl.getDisplayModes();
+            if (modes == null) {
+                return null;
+            }
+            final ArrayList<DisplayMode> remapped = new ArrayList<DisplayMode>();
+            for (DisplayMode mode : modes) {
+                DisplayMode r = remapDisplayMode(mode);
+                if (r != null) {
+                    remapped.add(r);
+                }
+            }
+            return remapped.toArray(new DisplayMode[remapped.size()]);
+        }
+
+		@Override
+        public DisplayMode getCurrentDisplayMode() {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DISPLAY_ENGINE)) {
+                Log.e(TAG, "Display modes are not supported");
+                return null;
+            }
+            return remapDisplayMode(mHwImpl.getCurrentDisplayMode());
+        }
+
+		@Override
+        public DisplayMode getDefaultDisplayMode() {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DISPLAY_ENGINE)) {
+                Log.e(TAG, "Display modes are not supported");
+                return null;
+            }
+            return remapDisplayMode(mHwImpl.getDefaultDisplayMode());
+        }
+
+		@Override
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault) {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DISPLAY_ENGINE)) {
+                Log.e(TAG, "Display modes are not supported");
+                return false;
+            }
+            return mHwImpl.setDisplayMode(mode, makeDefault);
+        }
     };
 }

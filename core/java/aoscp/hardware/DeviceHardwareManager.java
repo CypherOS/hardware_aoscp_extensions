@@ -25,6 +25,8 @@ import android.util.Log;
 
 import aoscp.content.HardwareContext;
 
+import com.android.internal.annotations.VisibleForTesting;
+
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -48,6 +50,12 @@ public final class DeviceHardwareManager {
     private static final List<Integer> BOOLEAN_FEATURES = Arrays.asList();
 
     private static DeviceHardwareManager sDeviceHardwareManagerInstance;
+	
+	/**
+     * DisplayEngine (DisplayModes)
+     */
+    @VisibleForTesting
+    public static final int FEATURE_DISPLAY_ENGINE = 0x1;
 
     /**
      * @hide to prevent subclassing from outside of the framework
