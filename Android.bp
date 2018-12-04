@@ -21,14 +21,13 @@ hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
     "android-support-annotations",
 ]
 
-java_library_static {
-    name: "hardware.aoscp",
-    required: ["services"],
+java_library {
+    name: "hardware.aoscp.core",
 
     libs: [
-        "services.core",
+        "services",
         "hardware.aoscp.controllers",
-    ] + hardware_aoscp_LOCAL_JAVA_LIBRARIES,
+    ] + lineage_sdk_LOCAL_JAVA_LIBRARIES,
 
     srcs: [
         path_core + "/**/*.java",
@@ -42,7 +41,27 @@ java_library_static {
     },
 }
 
+java_library_static {
+    name: "hardware.aoscp",
+    required: ["services"],
+    libs: hardware_aoscp_LOCAL_JAVA_LIBRARIES,
+
+    srcs: [
+        path_core + "/**/*.java",
+        path_core + "/**/I*.aidl",
+    ],
+
+    aidl: {
+        local_include_dirs: [path_core],
+    },
+}
+
 java_library {
     name: "hardware.aoscp.controllers",
     srcs: ["src//**/*.java"],
+
+    libs: [
+        "hardware.aoscp",
+        "services",
+    ],
 }
