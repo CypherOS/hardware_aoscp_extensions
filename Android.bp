@@ -27,7 +27,7 @@ java_library {
     libs: [
         "services",
         "hardware.aoscp.controllers",
-    ] + lineage_sdk_LOCAL_JAVA_LIBRARIES,
+    ] + hardware_aoscp_LOCAL_JAVA_LIBRARIES,
 
     srcs: [
         path_core + "/**/*.java",
