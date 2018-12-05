@@ -258,6 +258,19 @@ public final class DeviceHardwareManager {
         return null;
     }
 
+	/**
+     * @return the status of the fingerprint navigation
+     */
+    public boolean setFingerprintNavigation(boolean canUse) {
+        try {
+            if (checkService()) {
+                return sService.setFingerprintNavigation(canUse);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
     /**
      * @return true if service is valid
      */
