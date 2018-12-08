@@ -63,6 +63,12 @@ public final class DeviceHardwareManager {
     @VisibleForTesting
     public static final int FEATURE_FINGERPRINT_NAVIGATION = 0x2;
 
+	/**
+     * Reading Enhancement
+     */
+    @VisibleForTesting
+    public static final int FEATURE_READING_ENHANCEMENT = 0x3;
+
     /**
      * @hide to prevent subclassing from outside of the framework
      */
@@ -271,6 +277,19 @@ public final class DeviceHardwareManager {
         try {
             if (checkService()) {
                 return sService.setFingerprintNavigation(canUse);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+	/**
+     * @return the status of reading enhancement
+     */
+    public boolean setGrayScale(boolean state) {
+        try {
+            if (checkService()) {
+                return sService.setGrayScale(state);
             }
         } catch (RemoteException e) {
         }

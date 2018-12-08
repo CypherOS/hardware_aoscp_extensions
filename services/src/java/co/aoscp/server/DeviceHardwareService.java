@@ -33,6 +33,7 @@ import aoscp.hardware.IDeviceHardwareService;
 
 import co.aoscp.hwcontrollers.DisplayEngineController;
 import co.aoscp.hwcontrollers.FingerprintNavigationController;
+import co.aoscp.hwcontrollers.ReadingEnhancementController;
 
 import com.android.server.HwSystemService;
 
@@ -60,6 +61,9 @@ public class DeviceHardwareService extends HwSystemService {
 
         // Fingerprint Navigation
         public boolean setFingerprintNavigation(boolean canUse);
+
+		// Reading Enhancement
+        public boolean setGrayScale(boolean state);
     }
 
     private class LegacyHardware implements HardwareInterface {
@@ -71,6 +75,8 @@ public class DeviceHardwareService extends HwSystemService {
                 mSupportedFeatures |= DeviceHardwareManager.FEATURE_DISPLAY_ENGINE;
             if (FingerprintNavigationController.isSupported())
                 mSupportedFeatures |= DeviceHardwareManager.FEATURE_FINGERPRINT_NAVIGATION;
+			if (ReadingEnhancementController.isSupported())
+                mSupportedFeatures |= DeviceHardwareManager.FEATURE_READING_ENHANCEMENT;
         }
 
         public int getSupportedFeatures() {
@@ -105,8 +111,12 @@ public class DeviceHardwareService extends HwSystemService {
             return DisplayEngineController.getModeName(mode);
         }
 
-        public boolean setFingerprintNavigation(boolean canUse) {
+		public boolean setFingerprintNavigation(boolean canUse) {
             return FingerprintNavigationController.setEnabled(canUse);
+		}
+
+        public boolean setGrayScale(boolean state) {
+            return ReadingEnhancementController.setEnabled(state);
         }
     }
 
@@ -239,6 +249,17 @@ public class DeviceHardwareService extends HwSystemService {
                 return false;
             }
             return mHwImpl.setFingerprintNavigation(canUse);
+        }
+
+		@Override
+        public boolean setGrayScale(boolean state) {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_READING_ENHANCEMENT)) {
+                Log.e(TAG, "Native reading enhancement is not supported");
+                return false;
+            }
+            return mHwImpl.setGrayScale(state);
         }
     };
 }
