@@ -32,4 +32,6 @@ interface IDeviceHardwareService {
     String getDisplayModeName(in int mode);
 
     boolean setFingerprintNavigation(in boolean canUse);
+
+    boolean setGrayScale(in boolean state);
 }
