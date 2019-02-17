@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015-2016 The CyanogenMod Project
- *               2017-2018 The LineageOS Project
- *               2018 CypherOS
+ *               2017-2019 The LineageOS Project
+ *               2018-2019 CypherOS
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package aoscp.hardware;
 
 import android.content.Context;
+import android.hidl.base.V1_0.IBase;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
@@ -30,7 +31,11 @@ import com.android.internal.annotations.VisibleForTesting;
 import java.lang.IllegalArgumentException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
+
+import vendor.aoscp.touch.V1_0.IFingerprintNavigation;
 
 /**
  * Manages access to device hardware extensions
@@ -41,15 +46,17 @@ import java.util.List;
  *  To get the instance of this class, utilize DeviceHardwareManager#getInstance(Context context)
  */
 public final class DeviceHardwareManager {
+
     private static final String TAG = "DeviceHardwareManager";
-
-    private static IDeviceHardwareService sService;
-
-    private Context mContext;
 
     private static final List<Integer> BOOLEAN_FEATURES = Arrays.asList();
 
+    private Context mContext;
+    private static IDeviceHardwareService sService;
     private static DeviceHardwareManager sDeviceHardwareManagerInstance;
+
+    // HIDL hals
+    private HashMap<Integer, IBase> mHIDLMap = new HashMap<Integer, IBase>();
 
     /**
      * DisplayEngine (DisplayModes)
@@ -109,19 +116,6 @@ public final class DeviceHardwareManager {
     }
 
     /**
-     * @return the supported features bitmask
-     */
-    public int getSupportedFeatures() {
-        try {
-            if (checkService()) {
-                return sService.getSupportedFeatures();
-            }
-        } catch (RemoteException e) {
-        }
-        return 0;
-    }
-
-    /**
      * Determine if a Device Hardware feature is supported
      *
      * @param feature The Device Hardware feature to query
@@ -129,7 +123,24 @@ public final class DeviceHardwareManager {
      * @return true if the feature is supported, false otherwise.
      */
     public boolean isSupported(int feature) {
-        return feature == (getSupportedFeatures() & feature);
+        return isSupportedHIDL(feature) || isSupportedLegacy(feature);
+    }
+
+    private boolean isSupportedHIDL(int feature) {
+        if (!mHIDLMap.containsKey(feature)) {
+            mHIDLMap.put(feature, getHIDLService(feature));
+        }
+        return mHIDLMap.get(feature) != null;
+    }
+
+    private boolean isSupportedLegacy(int feature) {
+        try {
+            if (checkService()) {
+                return feature == (sService.getSupportedFeatures() & feature);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
     }
 
     /**
@@ -152,6 +163,18 @@ public final class DeviceHardwareManager {
 
         return false;
     }
+
+    private IBase getHIDLService(int feature) {
+        try {
+            switch (feature) {
+                case FEATURE_FINGERPRINT_NAVIGATION:
+                    return IFingerprintNavigation.getService(true);
+            }
+        } catch (NoSuchElementException | RemoteException e) {
+        }
+        return null;
+    }
+
     /**
      * Determine if the given feature is enabled or disabled.
      *
@@ -167,7 +190,14 @@ public final class DeviceHardwareManager {
         }
 
         try {
-            if (checkService()) {
+            if (isSupportedHIDL(feature)) {
+                IBase obj = mHIDLMap.get(feature);
+                switch (feature) {
+                    case FEATURE_FINGERPRINT_NAVIGATION:
+                        IFingerprintNavigation fingerprintNav = (IFingerprintNavigation) obj;
+                        return fingerprintNav.isSupported();
+                }
+            } else if (checkService()) {
                 return sService.get(feature);
             }
         } catch (RemoteException e) {
@@ -191,7 +221,14 @@ public final class DeviceHardwareManager {
         }
 
         try {
-            if (checkService()) {
+            if (isSupportedHIDL(feature)) {
+                IBase obj = mHIDLMap.get(feature);
+                switch (feature) {
+                    case FEATURE_FINGERPRINT_NAVIGATION:
+                        IFingerprintNavigation fingerprintNav = (IFingerprintNavigation) obj;
+                        return fingerprintNav.setEnabled(enable);
+                }
+            } else if (checkService()) {
                 return sService.set(feature, enable);
             }
         } catch (RemoteException e) {
@@ -269,7 +306,11 @@ public final class DeviceHardwareManager {
      */
     public boolean setFingerprintNavigation(boolean canUse) {
         try {
-            if (checkService()) {
+            if (isSupportedHIDL(FEATURE_FINGERPRINT_NAVIGATION)) {
+                IFingerprintNavigation fingerprintNav = (IFingerprintNavigation)
+                        mHIDLMap.get(FEATURE_FINGERPRINT_NAVIGATION);
+                return fingerprintNav.setEnabled(canUse);
+            } else if (checkService()) {
                 return sService.setFingerprintNavigation(canUse);
             }
         } catch (RemoteException e) {
