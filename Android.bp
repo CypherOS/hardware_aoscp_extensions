@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2018 CypherOS
+// Copyright (C) 2018-2019 CypherOS
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,13 @@ hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
     "android-support-annotations",
 ]
 
+hardware_aoscp_LOCAL_STATIC_JAVA_LIBRARIES = [
+    "vendor.aoscp.touch-V1.0-java",
+]
+
 java_library {
     name: "hardware.aoscp.core",
+	static_libs: hardware_aoscp_LOCAL_STATIC_JAVA_LIBRARIES,
 
     libs: [
         "services",
@@ -44,6 +49,7 @@ java_library {
 java_library_static {
     name: "hardware.aoscp",
     required: ["services"],
+	static_libs: hardware_aoscp_LOCAL_STATIC_JAVA_LIBRARIES,
     libs: hardware_aoscp_LOCAL_JAVA_LIBRARIES,
 
     srcs: [
@@ -59,6 +65,7 @@ java_library_static {
 java_library {
     name: "hardware.aoscp.controllers",
     srcs: ["src//**/*.java"],
+	static_libs: hardware_aoscp_LOCAL_STATIC_JAVA_LIBRARIES,
 
     libs: [
         "hardware.aoscp",
