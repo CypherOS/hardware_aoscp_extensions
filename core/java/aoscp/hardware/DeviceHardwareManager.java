@@ -22,6 +22,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import aoscp.content.HardwareContext;
 
@@ -62,6 +63,12 @@ public final class DeviceHardwareManager {
      */
     @VisibleForTesting
     public static final int FEATURE_FINGERPRINT_NAVIGATION = 0x2;
+
+	/**
+     * Alert Slider
+     */
+    @VisibleForTesting
+    public static final int FEATURE_ALERT_SLIDER = 0x3;
 
     /**
      * @hide to prevent subclassing from outside of the framework
@@ -271,6 +278,32 @@ public final class DeviceHardwareManager {
         try {
             if (checkService()) {
                 return sService.setFingerprintNavigation(canUse);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+	/**
+     * @return notifies that the alert slider can be used
+     */
+    public boolean triStateReady(Context context) {
+        try {
+            if (checkService()) {
+                return sService.triStateReady(context);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+	/**
+     * @return handles the key event of the alert slider
+     */
+    public KeyEvent handleTriStateEvent(KeyEvent event) {
+        try {
+            if (checkService()) {
+                return sService.handleTriStateEvent(event);
             }
         } catch (RemoteException e) {
         }

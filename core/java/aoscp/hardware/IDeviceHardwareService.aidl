@@ -18,6 +18,9 @@
 
 package aoscp.hardware;
 
+import android.content.Context;
+import android.view.KeyEvent;
+
 /** @hide */
 interface IDeviceHardwareService {
 
@@ -32,4 +35,7 @@ interface IDeviceHardwareService {
     String getDisplayModeName(in int mode);
 
     boolean setFingerprintNavigation(in boolean canUse);
+
+    boolean triStateReady(in Context context);
+    KeyEvent handleTriStateEvent(in KeyEvent event);
 }
