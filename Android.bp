@@ -22,6 +22,7 @@ hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
 ]
 
 hardware_aoscp_LOCAL_STATIC_JAVA_LIBRARIES = [
+    "vendor.aoscp.displayengine-V1.0-java",
     "vendor.aoscp.touch-V1.0-java",
 ]
 
