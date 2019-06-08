@@ -17,6 +17,7 @@
 package co.aoscp.hwcontrollers;
 
 import android.content.Context;
+import android.view.KeyEvent;
 
 /*
  * Alert Slider API
