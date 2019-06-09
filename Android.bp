@@ -15,11 +15,17 @@
 //
 
 path_core = "core/java/aoscp"
+path_interfaces = "vendor/interfaces"
 path_services = "services/src/java/co/aoscp/server"
 
 hardware_aoscp_LOCAL_JAVA_LIBRARIES = [
     "android-support-annotations",
 ]
+
+hidl_package_root {
+    name: "vendor.oneplus",
+    path: "hardware/aoscp/vendor/oneplus",
+}
 
 java_library {
     name: "hardware.aoscp.core",
@@ -45,6 +51,10 @@ java_library_static {
     name: "hardware.aoscp",
     required: ["services"],
     libs: hardware_aoscp_LOCAL_JAVA_LIBRARIES,
+	static_libs: [
+	    "vendor.oneplus.fingerprint.extension-V1.0-java",
+        "vendor.oneplus.hardware.display-V1.0-java",
+	],
 
     srcs: [
         path_core + "/**/*.java",
