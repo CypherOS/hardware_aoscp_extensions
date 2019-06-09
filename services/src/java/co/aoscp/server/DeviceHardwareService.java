@@ -57,7 +57,7 @@ public class DeviceHardwareService extends HwSystemService {
         public DisplayMode[] getDisplayModes();
         public DisplayMode getCurrentDisplayMode();
         public DisplayMode getDefaultDisplayMode();
-        public boolean setDisplayMode(int mode, boolean makeDefault);
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault);
 
         // Fingerprint Navigation
         public boolean setFingerprintNavigation(boolean canUse);
@@ -104,7 +104,7 @@ public class DeviceHardwareService extends HwSystemService {
             return DisplayEngineController.getDefaultMode();
         }
 
-        public boolean setDisplayMode(int mode, boolean makeDefault) {
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault) {
             return DisplayEngineController.setMode(mode, makeDefault);
         }
 
@@ -220,7 +220,7 @@ public class DeviceHardwareService extends HwSystemService {
         }
 
         @Override
-        public boolean setDisplayMode(int mode, boolean makeDefault) {
+        public boolean setDisplayMode(DisplayMode mode, boolean makeDefault) {
             mContext.enforceCallingOrSelfPermission(
                     android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
             if (!isSupported(DeviceHardwareManager.FEATURE_DISPLAY_MODES)) {
