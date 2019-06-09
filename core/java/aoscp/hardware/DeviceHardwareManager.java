@@ -33,6 +33,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+import vendor.oneplus.fingerprint.extension.V1_0.IVendorFingerprintExtensions;
+import vendor.oneplus.hardware.display.V1_0.IOneplusDisplay;
+
 /**
  * Manages access to device hardware extensions
  *
@@ -320,4 +323,24 @@ public final class DeviceHardwareManager {
         }
         return true;
     }
+
+    /**
+     * OnePlus HAL: Updates the status of the in display fingerprint
+     */
+	public void updateFodStatus(int status) {
+		try {
+			IVendorFingerprintExtensions extDaemon = IVendorFingerprintExtensions.getService();
+			extDaemon.updateStatus(status);
+		} catch (RemoteException e) {}
+	}
+
+    /**
+     * OnePlus HAL: Updates the current display mode during fingerprint initialization
+     */
+	public void setOpDisplayMode(int mode, int enable) {
+		try {
+			IOneplusDisplay extDaemon = IOneplusDisplay.getService();
+			extDaemon.setMode(mode, enable);
+		} catch (RemoteException e) {}
+	}
 }
