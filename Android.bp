@@ -45,6 +45,10 @@ java_library_static {
     name: "hardware.aoscp",
     required: ["services"],
     libs: hardware_aoscp_LOCAL_JAVA_LIBRARIES,
+	static_libs: [
+	    "vendor.oneplus.fingerprint.extension-V1.0-java",
+        "vendor.oneplus.hardware.display-V1.0-java",
+	]
 
     srcs: [
         path_core + "/**/*.java",
