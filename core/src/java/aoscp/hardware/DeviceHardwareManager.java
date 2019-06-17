@@ -18,6 +18,7 @@
 package aoscp.hardware;
 
 import android.content.Context;
+import android.database.ContentObserver;
 import android.hidl.base.V1_0.IBase;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -81,6 +82,12 @@ public final class DeviceHardwareManager {
      */
     @VisibleForTesting
     public static final int FEATURE_ALERT_SLIDER = 0x3;
+
+	/**
+     * Doze Sensor
+     */
+    @VisibleForTesting
+    public static final int FEATURE_DOZE_SENSOR = 0x4;
 
     /**
      * @hide to prevent subclassing from outside of the framework
@@ -398,6 +405,36 @@ public final class DeviceHardwareManager {
         } catch (RemoteException e) {
         }
         return null;
+    }
+
+	public boolean setSensor(boolean listening) {
+		try {
+            if (checkService()) {
+                return sService.setSensor(listening);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+	public boolean registerDozeObserver(ContentObserver observer) {
+		try {
+            if (checkService()) {
+                return sService.registerDozeObserver(observer);
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+	public boolean updateSensor() {
+		try {
+            if (checkService()) {
+                return sService.updateSensor();
+            }
+        } catch (RemoteException e) {
+        }
+        return false;
     }
 
     /**

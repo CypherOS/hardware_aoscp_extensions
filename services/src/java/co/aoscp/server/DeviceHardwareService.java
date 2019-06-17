@@ -19,6 +19,7 @@ package co.aoscp.server;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.Manifest;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -36,6 +37,7 @@ import aoscp.hardware.IDeviceHardwareService;
 import co.aoscp.hwcontrollers.AlertSliderController;
 import co.aoscp.hwcontrollers.DisplayEngineController;
 import co.aoscp.hwcontrollers.FingerprintNavigationController;
+import co.aoscp.hwcontrollers.ProximitySensorController;
 
 import com.android.server.HwSystemService;
 
@@ -66,6 +68,11 @@ public class DeviceHardwareService extends HwSystemService {
         // Alert Slider
         public boolean triStateReady(Context context);
         public KeyEvent handleTriStateEvent(KeyEvent event);
+
+		// Doze Sensor
+		public boolean setSensor(boolean listening);
+	    public boolean registerDozeObserver(ContentObserver observer);
+	    public boolean updateSensor();
     }
 
     private class LegacyHardware implements HardwareInterface {
@@ -79,6 +86,8 @@ public class DeviceHardwareService extends HwSystemService {
                 mSupportedFeatures |= DeviceHardwareManager.FEATURE_FINGERPRINT_NAVIGATION;
             if (AlertSliderController.isSupported())
                 mSupportedFeatures |= DeviceHardwareManager.FEATURE_ALERT_SLIDER;
+			if (ProximitySensorController.isSupported())
+                mSupportedFeatures |= DeviceHardwareManager.FEATURE_DOZE_SENSOR;
         }
 
         public int getSupportedFeatures() {
@@ -119,6 +128,18 @@ public class DeviceHardwareService extends HwSystemService {
 
         public KeyEvent handleTriStateEvent(KeyEvent event) {
             return AlertSliderController.handleTriStateEvent(event);
+        }
+
+		public boolean setSensor(boolean listening) {
+            return ProximitySensorController.setSensor(listening);
+        }
+
+		public boolean registerDozeObserver(ContentObserver observer) {
+            return ProximitySensorController.registerDozeObserver(observer);
+        }
+
+		public boolean updateSensor() {
+            return ProximitySensorController.updateSensor();
         }
     }
 
@@ -262,6 +283,39 @@ public class DeviceHardwareService extends HwSystemService {
                 return null;
             }
             return mHwImpl.handleTriStateEvent(event);
+        }
+
+		@Override
+        public boolean setSensor(boolean listening) {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DOZE_SENSOR)) {
+                Log.e(TAG, "Doze sensor is not supported");
+                return false;
+            }
+            return mHwImpl.setSensor(listening);
+        }
+
+		@Override
+        public boolean registerDozeObserver(ContentObserver observer) {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DOZE_SENSOR)) {
+                Log.e(TAG, "Doze sensor is not supported");
+                return false;
+            }
+            return mHwImpl.registerDozeObserver(observer);
+        }
+
+		@Override
+        public boolean updateSensor() {
+            mContext.enforceCallingOrSelfPermission(
+                    android.Manifest.permission.DEVICE_HARDWARE_ACCESS, null);
+            if (!isSupported(DeviceHardwareManager.FEATURE_DOZE_SENSOR)) {
+                Log.e(TAG, "Doze sensor is not supported");
+                return false;
+            }
+            return mHwImpl.updateSensor();
         }
     };
 }
