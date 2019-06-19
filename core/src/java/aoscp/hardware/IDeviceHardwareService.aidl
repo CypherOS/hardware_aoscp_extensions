@@ -18,6 +18,7 @@
 
 package aoscp.hardware;
 
+import android.database.ContentObserver;
 import android.view.KeyEvent;
 
 import aoscp.hardware.DisplayMode;
@@ -38,4 +39,8 @@ interface IDeviceHardwareService {
 
     boolean triStateReady();
     KeyEvent handleTriStateEvent(in KeyEvent event);
+
+	boolean setSensor(in boolean listening);
+	boolean registerDozeObserver(in ContentObserver observer);
+	boolean updateSensor();
 }
