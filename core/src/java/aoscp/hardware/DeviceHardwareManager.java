@@ -53,7 +53,9 @@ public final class DeviceHardwareManager {
 
     private static final String TAG = "DeviceHardwareManager";
 
-    private static final List<Integer> BOOLEAN_FEATURES = Arrays.asList();
+    private static final List<Integer> BOOLEAN_FEATURES = Arrays.asList(
+	    FEATURE_FINGERPRINT_NAVIGATION
+	);
     private final ArrayMap<String, String> mDisplayModeMappings = new ArrayMap<String, String>();
     private final boolean mFilterDisplayModes;
 
