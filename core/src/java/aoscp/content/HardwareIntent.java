@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2015 The CyanogenMod Project
  * Copyright (C) 2018 CypherOS
- * This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,4 +34,14 @@ public class HardwareIntent {
      */
     public static final String ACTION_INITIALIZE_DEVICE_HARDWARE =
             "android.intent.action.INITIALIZE_DEVICE_HARDWARE";
+
+	/**
+     * Broadcast action: notify the system that the user has performed a gesture on the screen
+     * to launch the camera. Broadcast should be protected to receivers holding the
+     * {@link Manifest.permission#STATUS_BAR_SERVICE} permission.
+     * @hide
+     */
+    public static final String ACTION_SCREEN_CAMERA_GESTURE =
+            "aoscp.intent.action.SCREEN_CAMERA_GESTURE";
+
 }
