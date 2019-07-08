@@ -21,9 +21,9 @@ package aoscp.content;
 import android.Manifest;
 
 /**
- * CypherOS Hardware Intent Class.
+ * aoscp/hw Intent Class.
  */
-public class HardwareIntent {
+public class Intent {
 
     /**
      * Broadcast action: Perform any initialization required for aoscp hardware services.
