@@ -27,7 +27,6 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import aoscp.content.HardwareContext;
 import aoscp.hardware.DeviceHardwareManager;
 import aoscp.hardware.DisplayMode;
 import aoscp.hardware.IDeviceHardwareService;
@@ -151,12 +150,12 @@ public class DeviceHardwareService extends HwSystemService {
         super(context);
         mContext = context;
         mHwImpl = getImpl(context);
-        publishBinderService(HardwareContext.DEVICE_HARDWARE_SERVICE, mService);
+        publishBinderService(aoscp.content.Context.DEVICE_HARDWARE_SERVICE, mService);
     }
 
     @Override
     public String getHardwareFeatures() {
-        return HardwareContext.Features.HARDWARE_AOSCP;
+        return aoscp.content.Context.Features.HARDWARE_AOSCP;
     }
 
     @Override

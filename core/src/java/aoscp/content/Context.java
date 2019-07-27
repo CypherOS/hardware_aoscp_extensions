@@ -23,12 +23,12 @@ import android.Manifest;
  * @hide
  * CypherOS Hardware Context Class.
  */
-public final class HardwareContext {
+public final class Context {
 
     /**
      * @hide
      */
-    private HardwareContext() {
+    private Context() {
         // Empty constructor
     }
 

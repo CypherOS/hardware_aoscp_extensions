@@ -26,8 +26,6 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import aoscp.content.HardwareContext;
-
 import com.android.internal.annotations.VisibleForTesting;
 
 import java.lang.IllegalArgumentException;
@@ -105,7 +103,7 @@ public final class DeviceHardwareManager {
         sService = getService();
 
         if (context.getPackageManager().hasSystemFeature(
-                HardwareContext.Features.HARDWARE_AOSCP) && !checkService()) {
+                aoscp.content.Context.Features.HARDWARE_AOSCP) && !checkService()) {
             Log.wtf(TAG, "Unable to get DeviceHardwareService. The service either" +
                     " crashed, was not started, or the interface has been called too early in" +
                     " SystemServer init");
@@ -142,7 +140,7 @@ public final class DeviceHardwareManager {
         if (sService != null) {
             return sService;
         }
-        IBinder b = ServiceManager.getService(HardwareContext.DEVICE_HARDWARE_SERVICE);
+        IBinder b = ServiceManager.getService(aoscp.content.Context.DEVICE_HARDWARE_SERVICE);
         if (b != null) {
             sService = IDeviceHardwareService.Stub.asInterface(b);
             return sService;
