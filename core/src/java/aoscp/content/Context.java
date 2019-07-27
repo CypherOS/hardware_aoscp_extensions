@@ -56,5 +56,12 @@ public final class Context {
          */
         public static final String HARDWARE_AOSCP = "hardware.aoscp.controllers";
 
+		/**
+         * Feature for {@link PackageManager#getSystemAvailableFeatures} and
+         * {@link PackageManager#hasSystemFeature}: The device includes the aoscp
+         * fingerprint in screen feature
+         */
+        public static final String INSCREEN_FINGERPRINT = "vendor.aoscp.biometrics.fingerprint.inscreen";
+
     }
 }
